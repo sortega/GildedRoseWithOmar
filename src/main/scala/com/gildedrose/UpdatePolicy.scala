@@ -10,7 +10,7 @@ object UpdatePolicy {
     case UpdatePolicy.Sulfuras.Name => Sulfuras
     case UpdatePolicy.AgedBrie.Name => AgedBrie
     case UpdatePolicy.BackstagePass.NamePattern(_) => BackstagePass
-    case _ => Default
+    case _ => Normal
   }
 
   abstract class AbstractUpdatePolicy extends UpdatePolicy {
@@ -74,5 +74,5 @@ object UpdatePolicy {
     }
   }
 
-  case object Default extends AbstractUpdatePolicy
+  case object Normal extends AbstractUpdatePolicy
 }
