@@ -11,7 +11,7 @@ class GildedRoseTest extends FlatSpec with ShouldMatchers with PropertyChecks {
   val itemNames = Gen.oneOf(
     "Normal item",
     "Aged Brie",
-    "Sulfuras, Hand of Ragnaros",
+    UpdatePolicy.Sulfuras.Name,
     "Backstage passes to a TAFKAL80ETC concert",
     "+5 Dexterity Vest"
   )

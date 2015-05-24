@@ -7,7 +7,7 @@ sealed trait UpdatePolicy {
 object UpdatePolicy {
 
   def policyFor(item: Item): UpdatePolicy = item.name match {
-    case "Sulfuras, Hand of Ragnaros" => Sulfuras
+    case UpdatePolicy.Sulfuras.Name => Sulfuras
     case _ => Default
   }
 
@@ -16,9 +16,7 @@ object UpdatePolicy {
       if (!item.name.equals("Aged Brie")
         && !item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
         if (item.quality > 0) {
-          if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
-            item.quality = item.quality - 1
-          }
+          item.quality = item.quality - 1
         }
       } else {
         if (item.quality < 50) {
@@ -40,17 +38,13 @@ object UpdatePolicy {
         }
       }
 
-      if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
-        item.sellIn = item.sellIn - 1
-      }
+      item.sellIn = item.sellIn - 1
 
       if (item.sellIn < 0) {
         if (!item.name.equals("Aged Brie")) {
           if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
             if (item.quality > 0) {
-              if (!item.name.equals("Sulfuras, Hand of Ragnaros")) {
-                item.quality = item.quality - 1
-              }
+              item.quality = item.quality - 1
             }
           } else {
             item.quality = item.quality - item.quality
@@ -64,7 +58,14 @@ object UpdatePolicy {
     }
   }
 
-  case object Sulfuras extends AbstractUpdatePolicy
+  case object Sulfuras extends AbstractUpdatePolicy {
+  case object Sulfuras extends UpdatePolicy {
+    val Name = "Sulfuras, Hand of Ragnaros"
+
+    override def update(item: Item): Unit = {
+      // Sulfuras nor degrades nor has to be sold
+    }
+  }
 
   case object Default extends AbstractUpdatePolicy
 }
