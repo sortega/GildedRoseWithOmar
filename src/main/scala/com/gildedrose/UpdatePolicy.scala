@@ -10,6 +10,7 @@ object UpdatePolicy {
     case UpdatePolicy.Sulfuras.Name => Sulfuras
     case UpdatePolicy.AgedBrie.Name => AgedBrie
     case UpdatePolicy.BackstagePass.NamePattern(_) => BackstagePass
+    case UpdatePolicy.Conjured.NamePattern(_) => Conjured
     case _ => Normal
   }
 
@@ -71,6 +72,15 @@ object UpdatePolicy {
 
     private def makeWorthless(item: Item): Unit = {
       item.quality = 0
+    }
+  }
+
+  case object Conjured extends AbstractUpdatePolicy {
+    val NamePattern = "Conjured (.*)".r
+
+    override protected def degrade(item: Item): Unit = {
+      super.degrade(item)
+      super.degrade(item)
     }
   }
 

@@ -21,6 +21,12 @@ class UpdatePolicyTest extends FlatSpec with ShouldMatchers {
       UpdatePolicy.BackstagePass
   }
 
+  it should "detect conjured items" in {
+    UpdatePolicy.policyFor(new Item("Conjured +5 Dexterity Vest", 4, 15)) shouldBe
+      UpdatePolicy.Conjured
+    UpdatePolicy.policyFor(new Item("Conjured shield", 4, 15)) shouldBe UpdatePolicy.Conjured
+  }
+
   it should "detect normal items" in {
     UpdatePolicy.policyFor(new Item("+5 Dexterity Vest", 4, 15)) shouldBe UpdatePolicy.Normal
     UpdatePolicy.policyFor(new Item("Normal item", 4, 15)) shouldBe UpdatePolicy.Normal
