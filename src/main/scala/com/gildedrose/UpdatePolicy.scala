@@ -14,27 +14,18 @@ object UpdatePolicy {
 
   abstract class AbstractUpdatePolicy extends UpdatePolicy {
     override def update(item: Item): Unit = {
-      if (!item.name.equals("Aged Brie")
-        && !item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-        if (item.quality > 0) {
-          item.quality = item.quality - 1
-        }
+      if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+        age(item)
       } else {
-        if (item.quality < 50) {
-          item.quality = item.quality + 1
+        enhance(item)
 
-          if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            if (item.sellIn < 11) {
-              if (item.quality < 50) {
-                item.quality = item.quality + 1
-              }
-            }
+        if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+          if (item.sellIn < 11) {
+            enhance(item)
+          }
 
-            if (item.sellIn < 6) {
-              if (item.quality < 50) {
-                item.quality = item.quality + 1
-              }
-            }
+          if (item.sellIn < 6) {
+            enhance(item)
           }
         }
       }
@@ -42,25 +33,37 @@ object UpdatePolicy {
       item.sellIn = item.sellIn - 1
 
       if (item.sellIn < 0) {
-        if (!item.name.equals("Aged Brie")) {
-          if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            if (item.quality > 0) {
-              item.quality = item.quality - 1
-            }
-          } else {
-            item.quality = item.quality - item.quality
-          }
+        if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+          age(item)
         } else {
-          if (item.quality < 50) {
-            item.quality = item.quality + 1
-          }
+          item.quality = item.quality - item.quality
         }
+      }
+    }
+
+    protected def age(item: Item): Unit = {
+      degrade(item)
+    }
+
+    protected def degrade(item: Item): Unit = {
+      if (item.quality > 0) {
+        item.quality = item.quality - 1
+      }
+    }
+
+    protected def enhance(item: Item): Unit = {
+      if (item.quality < 50) {
+        item.quality = item.quality + 1
       }
     }
   }
 
   case object AgedBrie extends AbstractUpdatePolicy {
     val Name = "Aged Brie"
+
+    override protected def age(item: Item): Unit = {
+      enhance(item)
+    }
   }
 
   case object Sulfuras extends UpdatePolicy {
