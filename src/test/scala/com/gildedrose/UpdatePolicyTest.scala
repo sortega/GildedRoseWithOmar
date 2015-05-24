@@ -5,12 +5,12 @@ import org.scalatest.{ShouldMatchers, FlatSpec}
 class UpdatePolicyTest extends FlatSpec with ShouldMatchers {
 
   "The update policy" should "detect Sulfuras items" in {
-    UpdatePolicy.policyFor(new Item(UpdatePolicy.Sulfuras.Name, 1, 80)) shouldBe
+    UpdatePolicy.policyFor(new Item(UpdatePolicy.Sulfuras.name, 1, 80)) shouldBe
       UpdatePolicy.Sulfuras
   }
 
   it should "detect Aged Brie items" in {
-    UpdatePolicy.policyFor(new Item(UpdatePolicy.AgedBrie.Name, 4, 15)) shouldBe
+    UpdatePolicy.policyFor(new Item(UpdatePolicy.AgedBrie.name, 4, 15)) shouldBe
       UpdatePolicy.AgedBrie
   }
 

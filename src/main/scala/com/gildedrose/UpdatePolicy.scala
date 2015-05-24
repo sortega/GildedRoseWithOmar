@@ -1,17 +1,27 @@
 package com.gildedrose
 
+import scala.util.matching.Regex
+
 sealed trait UpdatePolicy {
+  def appliesTo(item: Item): Boolean
   def update(item: Item): Unit
 }
 
 object UpdatePolicy {
 
-  def policyFor(item: Item): UpdatePolicy = item.name match {
-    case UpdatePolicy.Sulfuras.Name => Sulfuras
-    case UpdatePolicy.AgedBrie.Name => AgedBrie
-    case UpdatePolicy.BackstagePass.NamePattern(_) => BackstagePass
-    case UpdatePolicy.Conjured.NamePattern(_) => Conjured
-    case _ => Normal
+  def policyFor(item: Item): UpdatePolicy =
+    Seq(Sulfuras, AgedBrie, BackstagePass, Conjured)
+      .find(_.appliesTo(item))
+      .getOrElse(Normal)
+
+  trait MatchByName extends UpdatePolicy {
+    val name: String
+    override def appliesTo(item: Item) = item.name == name
+  }
+
+  trait MatchByPattern extends UpdatePolicy {
+    val pattern: Regex
+    override def appliesTo(item: Item) = pattern.unapplySeq(item.name).isDefined
   }
 
   abstract class AbstractUpdatePolicy extends UpdatePolicy {
@@ -40,24 +50,22 @@ object UpdatePolicy {
     }
   }
 
-  case object AgedBrie extends AbstractUpdatePolicy {
-    val Name = "Aged Brie"
-
+  case object AgedBrie extends AbstractUpdatePolicy with MatchByName {
+    override val name = "Aged Brie"
     override protected def age(item: Item): Unit = {
       enhance(item)
     }
   }
 
-  case object Sulfuras extends UpdatePolicy {
-    val Name = "Sulfuras, Hand of Ragnaros"
-
+  case object Sulfuras extends UpdatePolicy with MatchByName {
+    override val name = "Sulfuras, Hand of Ragnaros"
     override def update(item: Item): Unit = {
       // Sulfuras nor degrades nor has to be sold
     }
   }
 
-  case object BackstagePass extends AbstractUpdatePolicy {
-    val NamePattern = "Backstage passes to a (.*) concert".r
+  case object BackstagePass extends AbstractUpdatePolicy with MatchByPattern {
+    override val pattern = "Backstage passes to a (.*) concert".r
 
     protected override def age(item: Item): Unit = {
       if (item.sellIn >= 0) makeMoreDemanded(item)
@@ -75,8 +83,8 @@ object UpdatePolicy {
     }
   }
 
-  case object Conjured extends AbstractUpdatePolicy {
-    val NamePattern = "Conjured (.*)".r
+  case object Conjured extends AbstractUpdatePolicy with MatchByPattern {
+    override val pattern = "Conjured (.*)".r
 
     override protected def degrade(item: Item): Unit = {
       super.degrade(item)
@@ -84,5 +92,7 @@ object UpdatePolicy {
     }
   }
 
-  case object Normal extends AbstractUpdatePolicy
+  case object Normal extends AbstractUpdatePolicy {
+    override def appliesTo(item: Item) = true
+  }
 }
