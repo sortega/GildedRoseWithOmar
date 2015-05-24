@@ -15,30 +15,10 @@ object UpdatePolicy {
 
   abstract class AbstractUpdatePolicy extends UpdatePolicy {
     override def update(item: Item): Unit = {
-      if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-        age(item)
-      } else {
-        enhance(item)
-
-        if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-          if (item.sellIn < 11) {
-            enhance(item)
-          }
-
-          if (item.sellIn < 6) {
-            enhance(item)
-          }
-        }
-      }
-
+      age(item)
       item.sellIn = item.sellIn - 1
-
       if (item.sellIn < 0) {
-        if (!item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-          age(item)
-        } else {
-          item.quality = item.quality - item.quality
-        }
+        age(item)
       }
     }
 
@@ -77,6 +57,21 @@ object UpdatePolicy {
 
   case object BackstagePass extends AbstractUpdatePolicy {
     val NamePattern = "Backstage passes to a (.*) concert".r
+
+    protected override def age(item: Item): Unit = {
+      if (item.sellIn >= 0) makeMoreDemanded(item)
+      else makeWorthless(item)
+    }
+
+    private def makeMoreDemanded(item: Item): Unit = {
+      enhance(item)
+      if (item.sellIn < 11) enhance(item)
+      if (item.sellIn < 6) enhance(item)
+    }
+
+    private def makeWorthless(item: Item): Unit = {
+      item.quality = 0
+    }
   }
 
   case object Default extends AbstractUpdatePolicy
