@@ -8,6 +8,7 @@ object UpdatePolicy {
 
   def policyFor(item: Item): UpdatePolicy = item.name match {
     case UpdatePolicy.Sulfuras.Name => Sulfuras
+    case UpdatePolicy.AgedBrie.Name => AgedBrie
     case _ => Default
   }
 
@@ -58,7 +59,10 @@ object UpdatePolicy {
     }
   }
 
-  case object Sulfuras extends AbstractUpdatePolicy {
+  case object AgedBrie extends AbstractUpdatePolicy {
+    val Name = "Aged Brie"
+  }
+
   case object Sulfuras extends UpdatePolicy {
     val Name = "Sulfuras, Hand of Ragnaros"
 
