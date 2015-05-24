@@ -9,6 +9,7 @@ object UpdatePolicy {
   def policyFor(item: Item): UpdatePolicy = item.name match {
     case UpdatePolicy.Sulfuras.Name => Sulfuras
     case UpdatePolicy.AgedBrie.Name => AgedBrie
+    case UpdatePolicy.BackstagePass.NamePattern(_) => BackstagePass
     case _ => Default
   }
 
@@ -72,6 +73,10 @@ object UpdatePolicy {
     override def update(item: Item): Unit = {
       // Sulfuras nor degrades nor has to be sold
     }
+  }
+
+  case object BackstagePass extends AbstractUpdatePolicy {
+    val NamePattern = "Backstage passes to a (.*) concert".r
   }
 
   case object Default extends AbstractUpdatePolicy
